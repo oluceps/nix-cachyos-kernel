@@ -6,6 +6,7 @@
   stdenv,
   kernelPatches,
   linuxKernel,
+  runCommand,
   ...
 }:
 {
@@ -23,7 +24,11 @@ let
   ver0 = builtins.elemAt splitted 0;
   major = lib.versions.pad 2 ver0;
 
-  cachyosConfigFile = "${inputs.cachyos-kernel.outPath}/${configVariant}/config";
+  cachyosConfigFile = runCommand "cachyos-defconfig-patched" { } ''
+    cat ${"${inputs.cachyos-kernel.outPath}/${configVariant}/config"} > $out
+
+    echo "CONFIG_MZEN3=y" >> $out
+  '';
 
   # buildLinux doesn't accept postPatch, so adding config file early here
   patchedSrc = stdenv.mkDerivation {
