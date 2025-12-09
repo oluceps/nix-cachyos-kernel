@@ -71,6 +71,8 @@
             cachyosKernels = loadPackages prev;
           };
 
+          mkFixedVersionKernelWith =
+            userpkgs: loadPackages (import inputs.nixpkgs { inherit (userpkgs) system; });
           # Example configurations for testing CachyOS kernel
           nixosConfigurations = lib.genAttrs systems (
             system:
